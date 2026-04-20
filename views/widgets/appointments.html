@@ -1,0 +1,1 @@
+<div class="appointment-button" ng-repeat="appointment in appointments track by $index" type="button" ng-click="onButtonClicked(appointment, true)"><span class="appointment-time" ng-bind="appointment.formattedStartAt"></span> <span class="appointment-name" ng-bind="appointment.queueName"></span></div>

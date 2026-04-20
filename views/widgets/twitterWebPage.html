@@ -1,0 +1,150 @@
+<head><script async src="http://platform.twitter.com/widgets.js" charset="utf-8"></script><style>body {
+    width:100%; 
+    height:100%; 
+    margin:0px
+}
+
+body > *, #main > iframe{
+    width:100%; 
+    height:100%; 
+    position:relative; 
+    display:inline-block;
+}
+
+.timeline-AnimatedTimeline > *.load{
+    opacity:1;
+    position:relative;
+    z-index:1;
+    
+}
+
+.timeline-AnimatedTimeline > *.unload{
+    opacity:0;
+    position:absolute;
+    z-index:-1;
+}
+
+.timeline-AnimatedTimeline > *{
+    position:absolute;
+    top:0px;
+    left:0px;
+}
+
+.timeline-AnimatedElement{
+    transition: opacity 2s linear;    
+}
+
+::-webkit-scrollbar { width: 1px; }</style><style type="text/css">@import url("https://platform.twitter.com/css/timeline.32e4c4ad05a2b0fae454cc63470e160f.light.ltr.css");</style><script>var movement=true;
+var interv = setInterval(function(){
+    if(typeof(twttr)!=="undefined"){
+        clearTimeout(interv);
+        window.parent.postMessage("READY",'*');
+    }
+},100);
+
+var messageHandler = function(event,a,b) {
+    var obj=JSON.parse(event.data); //el widget envía un JSON en forma de string en event.data. Acá se lo parsea
+
+    //Me fijo si ya existe el widget, si es así, lo borro y creo otro.
+    var wgt = document.getElementById("main");
+    if(wgt!==null){
+        wgt.remove();
+    }
+    var arr = document.body.childNodes;
+    
+    //Borro el signo de mayor que aparece en el body, para que no se vea.
+    for(var j=0;j<arr.length;j++){
+        if(arr[j].nodeType===3 && arr[j].wholeText.indexOf(">")!==-1){
+            arr[j].remove();
+        }
+    }
+
+    var widget = document.createElement("div");
+    widget.id="main";
+    document.body.appendChild(widget);
+    
+    switch(obj.type){
+        case "Tweet":
+            document.getElementById("two").style.display="none";
+            twttr.widgets.createTweet(obj.datasrc.id,widget,obj.opt);
+        break;
+        case "Timeline":
+            movement=obj.animation;
+            twttr.widgets.createTimeline(obj.datasrc,document.getElementById("main"),obj.opt);
+            event.source.postMessage({'newObj': obj, 'endpoint':obj.opt.dataSource.endpoint, 'id':obj.opt.dataSource.id}, event.origin);
+        break;
+        case "element":
+            clearInterval(interv);
+            //Cambio las rutas para que funcionen
+            obj.element=obj.element.replace(/data-src-\dx/g,"src");
+            obj.element=obj.element.replace(/data-srcset/g,"src");
+            obj.element=obj.element.replace(/%3A/g,":");
+            obj.element=obj.element.replace(/%2F/g,"/");
+            obj.element=obj.element.replace(/:[slm](.*?)w"/g,"\"");
+            //Borro el botón de "cargar más" y el footer ya que exceden al propósito del widget
+            obj.element=obj.element.replace(/<div class\=\"timeline-LoadMore\"(\w|\W)+<\/div>/g,"");
+            obj.element=obj.element.replace(/<footer(\w|\W)+footer>/g,"");
+
+            //obj.element contiene el string del html obtenido con la request a twitter
+            document.getElementById("two").innerHTML=obj.element;
+            //se oculta el div main donde se creó el widget. Se setea el scrolling para el widget
+            document.getElementById("main").style.display="none";
+            document.getElementById("two").style="overflow-y:scroll; display:inline-block";
+            if(movement===true){
+                animate();
+            };
+        break;
+    }
+};
+
+var animate = function(){
+    var coll = document.getElementsByClassName("timeline-TweetList-tweet customisable-border");
+    var parent = coll[0].parentElement;
+    parent.classList.add("timeline-AnimatedTimeline");
+
+//Muestro solo el primer tweet. 
+    for (var j = 0 ; j<coll.length ; j++){
+        //Oculto el timeline para evitar que se vean los tweets desaparecer inicialmente.
+        parent.style.opacity=0;
+        if(j!=0){
+            coll[j].classList.add("unload");
+        }else{
+            coll[j].classList.add("load");
+        }
+
+        coll[j].classList.add("timeline-AnimatedElement");
+        if(j===coll.length-1){
+            //espero a que los tweets desaparezcan por completo para volver a mostrar el timeline
+            setTimeout(function(){
+                parent.style.opacity=1;
+            },2100);
+        }
+    }
+    
+
+    var num = 0;
+    //Cada 10 segundos se cambia el tweet que se muestra. Este intervalo se cancela cuando
+    //llega un nuevo mensaje element. Para evitar que se muestren varios tweets en simultáneo.
+    if(coll.length > 1) {
+        interv=setInterval(function(){
+            num++;
+            if(num===coll.length){
+
+                num=0;
+                coll[num].classList.add("load");
+                coll[coll.length-1].classList.add("unload");
+                coll[coll.length-1].classList.remove("load");
+                coll[num].classList.remove("unload");
+            }else{
+                coll[num].classList.add("load");
+                coll[num-1].classList.add("unload");
+                coll[num-1].classList.remove("load");            
+                coll[num].classList.remove("unload");
+            }
+        },10000);
+    }
+
+}
+
+//Este evento se dispara con los postMessage del player.
+window.addEventListener('message', messageHandler);</script></head><body><div id="two"></div></body>>

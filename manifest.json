@@ -1,0 +1,66 @@
+{
+    "manifest_version": 2,
+    "name": "debPlayerWeb",
+    "short_name": "debPlayerWeb",
+    "description": "",
+    "version": "3.32.4",
+    "minimum_chrome_version": "36",
+    "icons": {
+        "128": "assets/images/icon_128.png",
+        "256": "assets/images/icon_256.png"
+    },
+
+    "supportedPrinters" : {
+        "Epson TM-T20II": { "vendorId": "0x04b8", "productId": "0x0e15", "protocol":"POS"},
+        "REGO K532": { "vendorId": "0x0483", "productId": "0x5720", "protocol":"POS"},
+        "Sam4s GIANT-100": { "vendorId": "0x1c8a", "productId": "0x3a0e", "protocol":"POS"},
+        "Star TUP500": { "vendorId": "0x0519", "productId": "0x0002", "protocol":"STAR"}
+    },
+
+    "app": {
+        "background": {
+         "scripts": ["javascripts/background.js"]
+        }
+    },
+
+    "sockets": {
+        "udp": {
+            "send": ["*"],
+            "bind": ["*"]
+        },
+        "tcp": {
+            "connect" : ""
+        },
+        "tcpServer": {
+            "listen": "*"
+        }
+    },
+
+    "permissions": [
+        "<all_urls>",
+        "alwaysOnTopWindows",
+        "fullscreen",
+        "serial",
+        "storage",
+        "webview",
+        "unlimitedStorage",
+        "system.network",
+        "system.storage",
+        "system.memory",
+        "system.cpu",
+        "usb",
+        {
+            "usbDevices": [
+                { "vendorId": 7306, "productId": 14862 },
+                { "vendorId": 1155, "productId": 22304 },
+                { "vendorId": 4177, "productId": 4096 },
+                { "vendorId": 1208, "productId": 3605 },
+                { "vendorId": 4177, "productId": 4096 },
+                { "vendorId": 1208, "productId": 3587 }
+            ]
+        }
+    ],
+    "sandbox": {
+        "pages": ["views/widgets/twitterWebPage.html"]
+    }
+}

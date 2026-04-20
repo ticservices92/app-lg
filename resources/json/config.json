@@ -1,0 +1,38 @@
+{
+    "serverUrl" : "http://localhost:9000/debsign",
+    "screenId" : 1,
+    "token": "",
+    "password" : "",
+    "printer" :
+    {
+        "type" : "1",
+        "connected" : false,
+        "path" : "/dev/ttyACM0",
+        "baudrate" : 115200,
+        "vendorId" : 7306,
+        "productId" : 14862,
+        "ethernetUrl" : "127.0.0.1",
+        "ethernetPort" : 5005,
+        "device": "Epson TM-T20II",
+        "usbDriver":{
+            "vendorId": "0x04b8",
+            "productId": "0x0e15"
+        },
+        "bluetoothDevice": "RG-CB532B",
+        "ticketScale": 100,
+        "ticketPos": false,
+        "fullCut": false,
+        "useDeprecatedCommands": false
+    },
+    "showWaitingSlide": true,
+    "showDefaultErrorSlide": true,
+    "showPrintingSlide": true,
+    "log": "2",
+    "keyPadParsingEnabled": true,
+    "debugOnScreen": false,
+    "mouse": false,
+    "volume": 0,
+    "eventAudio": { "enabled":false },
+    "updateWithRemoteScript": false,
+    "streamMedia": false
+}
